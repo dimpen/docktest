@@ -1,0 +1,55 @@
+{
+  "accounts": [
+    {
+      "authentication": {
+        "api_token": "fdgsdfgsdfg-sdgsdfgsdfgsdfgdsfg",
+        "api_key": {
+          "auth_key": "sdfgsdfgdfgsdfdfsdsf",
+          "account_email": "dffdhfs@aafcm.a"
+        }
+      },
+      "zones": [
+        {
+          "id": "sfdgdsfgsdfgsdfgsdfgsdfgsfdgdfg",
+          "name": "example.com",
+          "purgeUnknownRecords": true,
+          "subdomains": [
+            {
+              "name": "",
+              "proxied": true,
+              "type": "A"
+            },
+            {
+              "name": "www",
+              "proxied": true,
+              "type": "A",
+            },
+            {
+              "name": "files",
+              "proxied": false,
+              "type": "A",
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "updater": {
+    "consensus": ["1111", "ipify", "identme"],
+    "majority": 2,
+    // "priority": ["1111", "ipify"],
+    // "onlyOnChange": true,
+    // "blacklist": ["94"],
+    "requestTimeout": 10,
+    "notifyCommand": ["./script.sh"],
+    "logNotifyOutput": true,
+    "disableComments": false,
+    "ttl": 600,
+    // "interval": 300
+  },
+  "logging": {
+    "stdout": {
+      "level": "DEBUG"
+    },
+  }
+}
