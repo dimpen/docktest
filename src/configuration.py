@@ -5,6 +5,7 @@ from string import Template
 import json5
 from jsonschema import validate
 from schema import SCHEMA
+from argparse import ArgumentParser
 
 
 DEFAULTS = {
@@ -52,21 +53,31 @@ def setup_config():
     config_file = None
     config = None
     cnf = {}
-    try:      
+    
+    try:    
+        
         if len(sys.argv) > 1:
-            if len(sys.argv)> 2 and sys.argv[1] == "--config" and sys.argv[2]:
-                config_path = Path(sys.argv[2]) 
-                if config_path.is_file() and os.access(config_path, os.R_OK):
-                    config_file = sys.argv[2]
-                else:
-                    raise Exception(f'Cannot read config file {sys.argv[2]}')
-                    # return None
-            else:
-                raise Exception(f'Usage: {sys.argv[0]} --config <config_filename>\n')
+            try:
+                parser = ArgumentParser()
+                parser.suggest_on_error=True
+                parser.add_argument("-c", "--config", type=Path, help="json configuration file path")
+                parser.add_argument("-i", "--interval", type=int, help="set interval in seconds for updates (overrides config option)")
+                args = parser.parse_args()
+                
+                if args.config:
+                    config_path = Path(args.config) 
+                    if config_path.is_file() and os.access(config_path, os.R_OK):
+                        config_file = args.config
+                    else:
+                        raise Exception(f'Cannot read json configuration file {args.config}')
+            except Exception as e:
+                sys.stderr.write(f'{e}\n\n')
+                parser.print_help()
+                sys.exit(1)
                 # return None
 
         if not config_file: 
-            config_file = os.path.join(os.environ.get('CONFIG_PATH', os.getcwd()), "config-example.json")
+            config_file = os.path.join(os.environ.get('CONFIG_PATH', os.getcwd()), "config.json")
         # Read in all environment variables that have the correct prefix
         env_vars = {key: value for (key, value) in os.environ.items() if key.startswith('CF_DDNS_')}
 
@@ -81,16 +92,29 @@ def setup_config():
             raise Exception(f'Cannot read configuration from: {config_file}') 
 
         try:
+            # with open("schema.json", "r") as schema_file:
+            #     SCHEMA = json5.load(schema_file)
             validate(instance=config, schema=SCHEMA)
         except Exception as e:
             raise Exception(f'Error validating config: {e}')
         
+        
+        cnf["warnings"] = []
+        
         cnf.update({**DEFAULTS["updater"], **config.get("updater",{})})                                
 
         if cnf.get("consensus"):
+            if config.get("updater",{}).get("priority"):
+                cnf.pop("priority")
+                cnf["warnings"].append("priority")
+                
             majority = max(int(len(cnf.get("consensus"))/2)+1, cnf.get("majority",0))
             majority = min(majority, len(cnf.get("consensus")))
             cnf.update({"majority": majority})
+        
+        
+        if len(sys.argv) > 1 and args.interval:
+            cnf.update({"interval": args.interval})        
         
         if config.get("logging"):
             # iterate all the expected keys
@@ -129,4 +153,3 @@ def setup_config():
     except Exception as e:
         sys.stderr.write(f'Configuration Error:\n {e} \nCheck config-example.json for correct configuration. https://www.example.com')
         _CONF=None
-

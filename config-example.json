@@ -2,7 +2,7 @@
   "accounts": [
     {
       "authentication": {
-        "api_token": "fdgsdfgsdfg-sdgsdfgsdfgsdfgdsfg",
+        "api_token": "${CF_DDNS_API_TOKEN}",
         "api_key": {
           "auth_key": "sdfgsdfgdfgsdfdfsdsf",
           "account_email": "dffdhfs@aafcm.a"

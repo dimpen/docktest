@@ -4,10 +4,13 @@ import sys
 import time
 from configuration import getConfig
 from requests import Session
+from datetime import datetime
 
-if __name__ == '__main__':
+
+
+
+def main():
     s = Session()
-    
     if sys.version_info < (3, 10):
         raise Exception("This script requires Python 3.10+")   
 
@@ -15,12 +18,18 @@ if __name__ == '__main__':
     if not CONF:
         raise Exception(f'Failed to setup configuraion.')
     
+    print(f'API TOKEN: {CONF["accounts"][0]["authentication"].get("api_token","")}')
+    
     while True:
         r = s.get('https://ipv4.icanhazip.com', timeout=10)
         
         ip = r.text.strip()
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f'[{timestamp}] - Fetched IP: {ip}')
         
-        print(f'Fetched IP: {ip}')
+        time.sleep(CONF.get("interval",120))
         
-        time.sleep(30)
-        
+
+
+if __name__ == '__main__':
+    main()

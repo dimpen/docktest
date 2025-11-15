@@ -20,7 +20,8 @@ SCHEMA = {
                                     "auth_key": {"type": "string", "minLength": 16},
                                     "account_email": {
                                         "type": "string",
-                                        "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}",
+                                        # could produce more errors than fixes
+                                        # "pattern": r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}",
                                     },
                                 },
                             },
