@@ -43,7 +43,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: Release v${{ steps.get_version.outputs.version }}
+          name: Release ${{ github.ref }}
           generate_release_notes: true
           body: |
             Automated release ${{ github.repository }}-${{ github.ref }}
