@@ -72,7 +72,7 @@ jobs:
             Automated release for version v${{ steps.get_version.outputs.version }}
           files: |
             dist/docktest.pyz
-            dist/README.md
+            README.md
             dist/LICENSE
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

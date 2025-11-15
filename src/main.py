@@ -16,7 +16,8 @@ def main():
 
     CONF = getConfig()
     if not CONF:
-        raise Exception(f'Failed to setup configuraion.')
+        sys.stderr.write(f'Failed to setup configuration.\n')
+        sys.exit(1)
     
     print(f'API TOKEN: {CONF["accounts"][0]["authentication"].get("api_token","")}')
     
