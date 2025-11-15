@@ -1,8 +1,10 @@
 name: Auto Build and Release
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ "master" ]
+    tags:
+      - 'v*'
 
 jobs:
   build-and-release:
@@ -13,34 +15,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-        with:
-          fetch-depth: 0  # for comparing commits
+        # with:
+        #   fetch-depth: 0  # for comparing commits
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.14' # same version with docker python:alpine
-
-      - name: Get current version from code
-        id: get_version
-        run: |
-          VERSION=$(cat VERSION)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Detected version: $VERSION"
-
-      - name: Check if tag already exists
-        id: check_tag
-        run: |
-          if git rev-parse "v${{ steps.get_version.outputs.version }}" >/dev/null 2>&1; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-            echo "Tag v${{ steps.get_version.outputs.version }} already exists. Skipping release."
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Exit if tag exists
-        if: steps.check_tag.outputs.exists == 'true'
-        run: exit 0
 
       - name: Create zipapp
         run: |
@@ -50,29 +31,25 @@ jobs:
 
       - name: Copy additional files
         run: |
+          cp requirements.txt dist/ || true
           cp config-example.json dist/ || true
-          cp LICENSE dist/ || true
+          cp systemd/install.sh dist/ || true
           echo "Copied additional files"
 
-      - name: Commit tag and push
+      - name: Create tar.gz installation package
         run: |
-          VERSION=${{ steps.get_version.outputs.version }}
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag "v$VERSION"
-          git push origin "v$VERSION"
-          echo "Created tag v$VERSION"
+          tar -cvzf ${{ github.repository }}-install.tar.gz dist
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.get_version.outputs.version }}
           name: Release v${{ steps.get_version.outputs.version }}
+          generate_release_notes: true
           body: |
-            Automated release for version v${{ steps.get_version.outputs.version }}
+            Automated release ${{ github.repository }}-${{ github.ref }}
           files: |
-            dist/docktest.pyz
+            ${{ github.repository }}.tar.gz
             README.md
-            dist/LICENSE
+            LICENSE
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
