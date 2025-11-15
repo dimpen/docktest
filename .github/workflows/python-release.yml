@@ -28,16 +28,15 @@ jobs:
         
       - name: Create zipapp
         run: |
-          mkdir dist && cd dist
-          python -m zipapp src -o ${{ env.REPOSITORY_NAME }}.pyz -c -m "main:main"
-          chmod +x ${{ env.REPOSITORY_NAME }}.pyz
+          mkdir dist
+          python -m zipapp src -o dist/${{ env.REPOSITORY_NAME }}.pyz -c -m "main:main"
+          chmod +x dist/${{ env.REPOSITORY_NAME }}.pyz
 
       - name: Copy additional files
         run: |
-          cd dist
-          cp requirements.txt . || true
-          cp config-example.json . || true
-          cp systemd/install.sh . || true
+          cp requirements.txt dist/ || true
+          cp config-example.json dist/ || true
+          cp systemd/install.sh dist/ || true
           echo "Copied additional files"
 
       - name: Create tar.gz installation package
