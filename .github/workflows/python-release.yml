@@ -44,9 +44,9 @@ jobs:
 
       - name: Create zipapp
         run: |
-          mkdir -p dist
+          mkdir dist
           python -m zipapp src -o dist/docktest.pyz -c -m "main:main"
-          echo "Built dist/app.pyz"
+          echo "Built dist/docktest.pyz"
 
       - name: Copy additional files
         run: |
@@ -71,7 +71,7 @@ jobs:
           body: |
             Automated release for version v${{ steps.get_version.outputs.version }}
           files: |
-            dist/app.pyz
+            dist/docktest.pyz
             dist/README.md
             dist/LICENSE
         env:
