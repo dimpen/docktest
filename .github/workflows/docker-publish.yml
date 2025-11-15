@@ -6,11 +6,6 @@ on:
     tags:
       - 'v*'
 
-# env:
-#   REGISTRY: ghcr.io
-#   IMAGE_NAME: ${{ github.repository }}
-
-
 jobs:
 
   build-test-push:
@@ -43,32 +38,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-          
           
-        # with:
-        #   fetch-depth: 0 # Fetches
-        #   ref: master
-        #   fetch-tags: false
-        #   show-progress: true
-	    
-
-      #   # 5. Extract metadata
-      # - name: Extract metadata
-      #   id: meta
-      #   run: |
-      #     echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> "$GITHUB_OUTPUT"
-      #     echo "SHORT_SHA=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
-
-      #   # 6. Build dev Docker image
-      # - name: Build Docker image for tests
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     context: .
-      #     file: Dockerfile
-      #     tags: ${{ steps.meta.outputs.REPO_NAME }}-dev:latest
-      #     load: true # Load to local Docker daemon for testing
-      #     cache-from: type=local,src=/tmp/.buildx-cache
-      #     cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
-
-
       - name: Get Repository name
         run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
         
@@ -100,9 +69,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           
           
-          
-          
-          
       - name: Build and push images
         id: build
         uses: docker/build-push-action@v6
@@ -119,27 +85,21 @@ jobs:
           cache-to: type=local,dest=${{ runner.temp }}/.buildx-cache-new,mode=max
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      
-      
-          # tags: |
-          #   ${{ env.REGISTRY_GHCR }}/${{ env.IMAGE_NAME }}:latest
-          #   ${{ env.REGISTRY_GHCR }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          #   ${{ env.REGISTRY_DOCKERHUB }}/${{ env.IMAGE_NAME }}:latest
-          #   ${{ env.REGISTRY_DOCKERHUB }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-
           
-          
-          
-          
-          
+      - name: Generate artifact attestation for ghcr.io
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
           
       # Temp fix workaround https://docs.docker.com/build/ci/github-actions/cache/#local-cache
       - name: Update Buildx cache
-        if: always()
         run: |
           rm -rf ${{ runner.temp }}/.buildx-cache
           mv ${{ runner.temp }}/.buildx-cache-new ${{ runner.temp }}/.buildx-cache
-          
+      
+      
           
 
       # - name: Generate artifact attestation for docker.io

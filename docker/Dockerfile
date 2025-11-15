@@ -1,5 +1,7 @@
 FROM python:alpine AS base
 
+LABEL description="This text illustrates \
+that label-values can span multiple lines."
 
 ################################
 FROM base AS builder
