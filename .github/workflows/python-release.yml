@@ -28,27 +28,29 @@ jobs:
         
       - name: Create zipapp
         run: |
-          mkdir dist
-          python -m zipapp src -o dist/${{ env.REPOSITORY_NAME }}.pyz -c -m "main:main"
+          mkdir dist && cd dist
+          python -m zipapp src -o ${{ env.REPOSITORY_NAME }}.pyz -c -m "main:main"
+          chmod +x ${{ env.REPOSITORY_NAME }}.pyz
 
       - name: Copy additional files
         run: |
-          cp requirements.txt dist/ || true
-          cp config-example.json dist/ || true
-          cp systemd/install.sh dist/ || true
+          cd dist
+          cp requirements.txt . || true
+          cp config-example.json . || true
+          cp systemd/install.sh . || true
           echo "Copied additional files"
 
       - name: Create tar.gz installation package
         run: |
-          tar -cvzf ${{ env.REPOSITORY_NAME }}-install.tar.gz dist
+          tar -cvzf ${{ env.REPOSITORY_NAME }}-install.tar.gz -C dist .
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: Release ${{ github.ref }}
+          name: Release ${{ github.ref_name }}
           generate_release_notes: true
           body: |
-            Automated release ${{ env.REPOSITORY_NAME }}-${{ github.ref }}
+            Automated release ${{ env.REPOSITORY_NAME }}-${{ github.ref_name }}
           files: |
             ${{ env.REPOSITORY_NAME }}-install.tar.gz
             README.md
