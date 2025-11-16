@@ -1,8 +1,5 @@
 FROM python:alpine AS base
 
-LABEL org.opencontainers.image.title "MY CHANGED TITLE"
-LABEL org.opencontainers.image.description "This text is a NEW description"
-
 ################################
 FROM base AS builder
 
