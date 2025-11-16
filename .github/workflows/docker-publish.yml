@@ -1,4 +1,4 @@
-name: Publish Docker image
+name: Publish Docker Image to Registries
 
 on:
   workflow_dispatch:
@@ -13,11 +13,13 @@ env:
 
 jobs:
   build-test-push:
+    if: startsWith(github.ref, 'refs/tags/')
     name: Build and Push Docker Images
     runs-on: ubuntu-latest
     permissions:
       packages: write
-      contents: read
+      actions: read ## sbom
+      contents: write # sbom -read
       attestations: write
       id-token: write
 

@@ -1,6 +1,5 @@
 FROM python:alpine AS base
 
-LABEL org.opencontainers.image.description "This text is a NEW description"
 
 
 ################################
@@ -12,6 +11,7 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 ###############################
 FROM base AS final
+LABEL org.opencontainers.image.description "This text is a NEW description"
 
 # Create non-root user
 RUN addgroup -g 1000 -S appgroup && adduser -u 1000 -S appuser -G appgroup
