@@ -14,5 +14,5 @@ services:
       # - PGID=1000
       - CF_DDNS_API_TOKEN=THISISMYSECRETTOKENBIGGERBETTER
     volumes:
-      - ./config-example.json:/config.json
+      - ./config-example.json:/config.json:ro
     restart: unless-stopped

@@ -1,6 +1,6 @@
 FROM python:alpine AS base
 
-LABEL org.opencontainers.image.description="This text illustrates \
+LABEL "org.opencontainers.image.description"="This text illustrates \
 that label-values can span multiple lines."
 
 ################################
