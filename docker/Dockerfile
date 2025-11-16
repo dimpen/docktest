@@ -1,6 +1,6 @@
 FROM python:alpine AS base
 
-LABEL org.opencontainers.image.description "This text is a description"
+LABEL org.opencontainers.image.description "This text is a NEW description"
 
 
 ################################
