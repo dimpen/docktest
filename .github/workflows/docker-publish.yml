@@ -47,6 +47,8 @@ jobs:
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
         with:
           tags: |
             type=semver,pattern={{version}}
@@ -73,7 +75,7 @@ jobs:
           
           
       - name: Build and push images
-        id: build
+        id: push
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -88,6 +90,8 @@ jobs:
           cache-to: type=local,dest=${{ runner.temp }}/.buildx-cache-new,mode=max
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+
           
       - name: Generate SBOM
         uses: anchore/sbom-action@v0
@@ -108,7 +112,7 @@ jobs:
       #   uses: actions/attest-build-provenance@v3
       #   with:
       #     subject-name: ${{ env.REGISTRY }}/${{ github.repository }}
-      #     subject-digest: ${{ steps.build.outputs.digest }}
+      #     subject-digest: ${{ steps.push.outputs.digest }}
       #     push-to-registry: true
           
       # Temp fix workaround https://docs.docker.com/build/ci/github-actions/cache/#local-cache
