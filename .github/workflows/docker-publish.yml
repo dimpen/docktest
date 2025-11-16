@@ -5,15 +5,12 @@ on:
   push:
     tags:
       - 'v*'
-    branches:
-      - release
 
 env:
   REGISTRY: ghcr.io
 
 jobs:
-  build-test-push:
-    if: startsWith(github.ref, 'refs/tags/')
+  build-push:
     name: Build and Push Docker Images
     runs-on: ubuntu-latest
     permissions:
@@ -60,6 +57,8 @@ jobs:
           images: |
             ${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
             ${{ env.REGISTRY }}/${{ github.repository }}
+          labels: |
+            type=org.opencontainers.image
   
   
       - name: Log in to Docker Hub
