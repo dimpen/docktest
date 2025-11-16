@@ -15,8 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
-      actions: read ## sbom
-      contents: write # sbom -read
+      contents: read
       attestations: write
       id-token: write
 
@@ -32,13 +31,13 @@ jobs:
         with:
           driver-opts: network=host
       
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: ${{ runner.temp }}/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-          
+      # - name: Cache Docker layers
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ${{ runner.temp }}/.buildx-cache
+      #     key: ${{ runner.os }}-buildx-${{ github.sha }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-buildx-          
           
       - name: Get Repository name
         run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
@@ -49,9 +48,9 @@ jobs:
         env:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
         with:
+          # type=sha,format=short
           tags: |
             type=semver,pattern={{version}}
-            type=sha,format=short
           flavor: |
             latest=true
           images: |
@@ -80,19 +79,19 @@ jobs:
           context: .
           file: docker/Dockerfile
           push: true
-          # provenance: mode=max
-          provenance: false
-          sbom: false
+          provenance: mode=max
+          sbom: true
           platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           # ,linux/386,linux/arm/v7
           # linux/amd64,linux/arm64,linux/386,linux/arm/v6,linux/arm/v7,linux/riscv64
-          cache-from: type=local,src=${{ runner.temp }}/.buildx-cache
-          cache-to: type=local,dest=${{ runner.temp }}/.buildx-cache-new,mode=max
+          # cache-from: type=local,src=${{ runner.temp }}/.buildx-cache
+          # cache-to: type=local,dest=${{ runner.temp }}/.buildx-cache-new,mode=max
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
 
-          
       # - name: Generate SBOM
       #   uses: anchore/sbom-action@v0
       #   with:
@@ -115,15 +114,15 @@ jobs:
       #     subject-digest: ${{ steps.push.outputs.digest }}
       #     push-to-registry: true
           
-      - name: Generate artifact attestation for docker.io
-        uses: actions/attest-build-provenance@v3
-        with:
-          subject-name: index.docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
-          subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
+      # - name: Generate artifact attestation for docker.io
+      #   uses: actions/attest-build-provenance@v3
+      #   with:
+      #     subject-name: index.docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
+      #     subject-digest: ${{ steps.push.outputs.digest }}
+      #     push-to-registry: true
       
 
-      - name: Generate artifact attestation for ${{ env.REGISTRY }}
+      - name: Generate artifact attestation for ghcr.io
         uses: actions/attest-build-provenance@v3
         with:
           subject-name: ${{ env.REGISTRY }}/${{ github.repository }}
@@ -131,10 +130,10 @@ jobs:
           push-to-registry: true
   
       # Temp fix workaround https://docs.docker.com/build/ci/github-actions/cache/#local-cache
-      - name: Update Buildx cache
-        run: |
-          rm -rf ${{ runner.temp }}/.buildx-cache
-          mv ${{ runner.temp }}/.buildx-cache-new ${{ runner.temp }}/.buildx-cache
+      # - name: Update Buildx cache
+      #   run: |
+      #     rm -rf ${{ runner.temp }}/.buildx-cache
+      #     mv ${{ runner.temp }}/.buildx-cache-new ${{ runner.temp }}/.buildx-cache
       
       
           
