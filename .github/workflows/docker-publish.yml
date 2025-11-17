@@ -117,12 +117,12 @@ jobs:
       #     subject-digest: ${{ steps.push.outputs.digest }}
       #     push-to-registry: true
           
-      # - name: Generate artifact attestation for docker.io
-      #   uses: actions/attest-build-provenance@v3
-      #   with:
-      #     subject-name: index.docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
-      #     subject-digest: ${{ steps.push.outputs.digest }}
-      #     push-to-registry: true
+      - name: Generate artifact attestation for docker.io
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-name: index.docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
       
 
       # - name: Generate artifact attestation for ghcr.io
