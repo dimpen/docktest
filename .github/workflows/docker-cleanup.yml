@@ -18,7 +18,7 @@ jobs:
         with:
           delete-tags: '^sha256:.{64}$'
           use-regex: true
-          dry-run: true
+          # dry-run: true
           delete-ghost-images: true
           delete-partial-images: true
           delete-orphaned-images: true
