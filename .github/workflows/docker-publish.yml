@@ -82,7 +82,7 @@ jobs:
           context: .
           file: docker/Dockerfile
           push: true
-          provenance: mode=max
+          # provenance: mode=max
           sbom: true
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
