@@ -47,10 +47,10 @@ jobs:
         uses: docker/metadata-action@v5
         env:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
+            # type=sha,format=short
         with:
           tags: |
             type=semver,pattern={{version}}
-            type=sha,format=short
           flavor: |
             latest=true
           images: |
@@ -75,9 +75,9 @@ jobs:
       - name: Build and push images
         id: push
         uses: docker/build-push-action@v6
-        # env:
-        #   DOCKER_BUILD_SUMMARY: false
-        # DOCKER_BUILD_RECORD_UPLOAD: false
+        env:
+          DOCKER_BUILD_SUMMARY: false
+          DOCKER_BUILD_RECORD_UPLOAD: false
         with:
           context: .
           file: docker/Dockerfile
