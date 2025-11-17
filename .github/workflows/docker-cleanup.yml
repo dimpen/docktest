@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: dataaxiom/ghcr-cleanup-action@v1
         with:
-          delete-tags: '^sha256-.{64}$'
+          delete-tags: 'sha256-.*'
           use-regex: true
           dry-run: true
           delete-ghost-images: true
