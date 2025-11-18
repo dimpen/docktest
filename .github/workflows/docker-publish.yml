@@ -123,6 +123,7 @@ jobs:
           
           
       - name: Generate predicate.json
+        id: generate_predicate
         run: |
           cat <<EOF > predicate.json
             {
@@ -162,14 +163,15 @@ jobs:
               }
             }
           EOF
-      
+          echo "file=predicate.json" >> $GITHUB_OUTPUT
+          
       - name: Attest for docker.io
         uses: actions/attest@v3
         id: attest
         with:
           subject-name: index.docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
           subject-digest: ${{ steps.push.outputs.digest }}
-          predicate-type: 'https://slsa.dev/provenance/v1'
-          predicate-path: 'predicate.json'
+          predicate-type: "https://slsa.dev/provenance/v1"
+          predicate: "${{ steps.generate_predicate.outputs.file }}"
           push-to-registry: true
           
