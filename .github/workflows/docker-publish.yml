@@ -127,7 +127,6 @@ jobs:
         run: |
           cat <<EOF > predicate.json
             {
-            "predicate": {
               "buildDefinition": {
                 "buildType": "https://actions.github.io/buildtypes/workflow/v1",
                 "externalParameters": {
@@ -161,7 +160,6 @@ jobs:
                 }
               }
             }
-          }
           EOF
           cat predicate.json >> $GITHUB_OUTPUT
           
