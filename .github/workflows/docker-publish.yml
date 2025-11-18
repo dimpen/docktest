@@ -150,6 +150,14 @@ jobs:
                     "digest": { "gitCommit": "${{ github.sha }}" }
                   }
                 ]
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/${{ github.repository }}/.github/workflows/${{ github.workflow }}@${{ github.ref }}"
+                },
+                "metadata": {
+                  "invocationId": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+                }
               }
             }
           }
