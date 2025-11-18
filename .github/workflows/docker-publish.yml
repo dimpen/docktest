@@ -117,49 +117,20 @@ jobs:
       #     subject-digest: ${{ steps.push.outputs.digest }}
       #     push-to-registry: true
           
-      # - name: Generate artifact attestation for docker.io
-      #   uses: actions/attest-build-provenance@v3
-      #   with:
-      #     subject-name: docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
-      #     subject-digest: ${{ steps.push.outputs.digest }}
-      #     push-to-registry: true
-      
-      - name: Attest for docker.io
-        uses: actions/attest@v3
-        id: attest
+      - name: Generate artifact attestation for docker.io
+        uses: actions/attest-build-provenance@v3
         with:
-          subject-name: index.docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
+          subject-name: docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
           subject-digest: ${{ steps.push.outputs.digest }}
-          predicate-type: 'https://slsa.dev/provenance/v1'
-          predicate: '{}'
           push-to-registry: true
-          
-      # - name: Generate artifact attestation for ghcr.io
-      #   uses: actions/attest-build-provenance@v3
+      
+      # - name: Attest for docker.io
+      #   uses: actions/attest@v3
+      #   id: attest
       #   with:
-      #     subject-name: ${{ env.REGISTRY }}/${{ github.repository }}
+      #     subject-name: index.docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
       #     subject-digest: ${{ steps.push.outputs.digest }}
+      #     predicate-type: 'https://slsa.dev/provenance/v1'
+      #     predicate: '{}'
       #     push-to-registry: true
-  
-      # Temp fix workaround https://docs.docker.com/build/ci/github-actions/cache/#local-cache
-      # - name: Update Buildx cache
-      #   run: |
-      #     rm -rf ${{ runner.temp }}/.buildx-cache
-      #     mv ${{ runner.temp }}/.buildx-cache-new ${{ runner.temp }}/.buildx-cache
-      
-      
           
-
-  
-      # # 9. Build and push prod image
-      # - name: Build and push production image
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     context: .
-      #     file: Dockerfile
-      #     push: true
-      #     platforms: linux/amd64,linux/arm64,linux/386,linux/arm/v6,linux/arm/v7,linux/riscv64
-      #     tags: |
-      #       ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKERHUB_PROJECT_NAME }}:latest
-      #       ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKERHUB_PROJECT_NAME }}:${{ steps.meta.outputs.SHORT_SHA }}
-      #     cache-from: type=local,src=/tmp/.buildx-cache
