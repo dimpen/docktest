@@ -127,43 +127,43 @@ jobs:
         run: |
           cat <<EOF > predicate.json
             {
-              "predicate": {
-                "buildDefinition": {
-                  "buildType": "https://actions.github.io/buildtypes/workflow/v1",
-                  "externalParameters": {
-                    "workflow": {
-                      "ref": "${{ github.ref }}",
-                      "repository": "https://github.com/${{ github.repository }}",
-                      "path": ".github/workflows/docker-publish.yml"
-                    }
-                  },
-                  "internalParameters": {
-                    "github": {
-                      "event_name": "${{ github.event_name }}",
-                      "repository_id": "${{ github.repository_id }}",
-                      "repository_owner_id": "${{ github.repository_owner_id }}",
-                      "runner_environment": "${{ runner.environment }}"
-                    }
-                  },
-                  "resolvedDependencies": [
-                    {
-                      "uri": "git+https://github.com/${{ github.repository }}@${{ github.ref }}",
-                      "digest": { "gitCommit": "${{ github.sha }}" }
-                    }
-                  ]
-                },
-                "runDetails": {
-                  "builder": {
-                    "id": "https://github.com/${{ github.workflow_ref }}"
-                  },
-                  "metadata": {
-                    "invocationId": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+            "predicate": {
+              "buildDefinition": {
+                "buildType": "https://actions.github.io/buildtypes/workflow/v1",
+                "externalParameters": {
+                  "workflow": {
+                    "ref": "${{ github.ref }}",
+                    "repository": "https://github.com/${{ github.repository }}",
+                    "path": ".github/workflows/docker-publish.yml"
                   }
+                },
+                "internalParameters": {
+                  "github": {
+                    "event_name": "${{ github.event_name }}",
+                    "repository_id": "${{ github.repository_id }}",
+                    "repository_owner_id": "${{ github.repository_owner_id }}",
+                    "runner_environment": "${{ runner.environment }}"
+                  }
+                },
+                "resolvedDependencies": [
+                  {
+                    "uri": "git+https://github.com/${{ github.repository }}@${{ github.ref }}",
+                    "digest": { "gitCommit": "${{ github.sha }}" }
+                  }
+                ]
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/${{ github.workflow_ref }}"
+                },
+                "metadata": {
+                  "invocationId": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
                 }
               }
             }
+          }
           EOF
-          echo "file=predicate.json" >> $GITHUB_OUTPUT
+          cat predicate.json >> $GITHUB_OUTPUT
           
       - name: Attest for docker.io
         uses: actions/attest@v3
