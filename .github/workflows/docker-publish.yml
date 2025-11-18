@@ -120,14 +120,48 @@ jobs:
           subject-name: index.docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
+          
+          
+      - name: Generate predicate.json
+        run: |
+          cat <<EOF > predicate.json
+          {
+            "predicate": {
+              "buildDefinition": {
+                "buildType": "https://actions.github.io/buildtypes/workflow/v1",
+                "externalParameters": {
+                  "workflow": {
+                    "ref": "${{ github.ref }}",
+                    "repository": "https://github.com/${{ github.repository }}",
+                    "path": ".github/workflows/${{ github.workflow }}"
+                  }
+                },
+                "internalParameters": {
+                  "github": {
+                    "event_name": "${{ github.event_name }}",
+                    "repository_id": "${{ github.repository_id }}",
+                    "repository_owner_id": "${{ github.repository_owner_id }}",
+                    "runner_environment": "${{ runner.environment }}"
+                  }
+                },
+                "resolvedDependencies": [
+                  {
+                    "uri": "git+https://github.com/${{ github.repository }}@${{ github.ref }}",
+                    "digest": { "gitCommit": "${{ github.sha }}" }
+                  }
+                ]
+              }
+            }
+          }
+          EOF
       
-      # - name: Attest for docker.io
-      #   uses: actions/attest@v3
-      #   id: attest
-      #   with:
-      #     subject-name: index.docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
-      #     subject-digest: ${{ steps.push.outputs.digest }}
-      #     predicate-type: 'https://slsa.dev/provenance/v1'
-      #     predicate: '{}'
-      #     push-to-registry: true
+      - name: Attest for docker.io
+        uses: actions/attest@v3
+        id: attest
+        with:
+          subject-name: index.docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          predicate-type: 'https://slsa.dev/provenance/v1'
+          predicate-path: 'predicate.json'
+          push-to-registry: true
           
