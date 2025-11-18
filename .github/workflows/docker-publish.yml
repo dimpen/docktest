@@ -161,7 +161,6 @@ jobs:
               }
             }
           EOF
-          cat predicate.json >> $GITHUB_OUTPUT
           
       - name: Attest for docker.io
         uses: actions/attest@v3
@@ -170,6 +169,6 @@ jobs:
           subject-name: index.docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
           subject-digest: ${{ steps.push.outputs.digest }}
           predicate-type: "https://slsa.dev/provenance/v1"
-          predicate: "${{ steps.generate_predicate.outputs.file }}"
+          predicate-path: "predicate.json"
           push-to-registry: true
           
