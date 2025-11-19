@@ -48,11 +48,13 @@ jobs:
         with:
           tags: |
             type=semver,pattern={{version}}
-          flavor: |
-            latest=true
+          # type=raw,latest
+          # flavor: |
+          #   latest=true
           images: |
             ${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
-            ghcr.io/${{ github.repository }}
+            
+          # ghcr.io/${{ github.repository }}
   
   
       - name: Log in to Docker Hub
@@ -61,12 +63,12 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Login to ghcr.io
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Login to ghcr.io
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
           
           
       - name: Build and push images
@@ -79,8 +81,8 @@ jobs:
           context: .
           file: docker/Dockerfile
           push: true
-          provenance: false
-          sbom: false
+          provenance: mode=max
+          sbom: true
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -122,53 +124,53 @@ jobs:
       #     push-to-registry: true
           
           
-      - name: Generate predicate.json
-        id: generate_predicate
-        run: |
-          cat <<EOF > predicate.json
-            {
-              "buildDefinition": {
-                "buildType": "https://actions.github.io/buildtypes/workflow/v1",
-                "externalParameters": {
-                  "workflow": {
-                    "ref": "${{ github.ref }}",
-                    "repository": "https://github.com/${{ github.repository }}",
-                    "path": ".github/workflows/docker-publish.yml"
-                  }
-                },
-                "internalParameters": {
-                  "github": {
-                    "event_name": "${{ github.event_name }}",
-                    "repository_id": "${{ github.repository_id }}",
-                    "repository_owner_id": "${{ github.repository_owner_id }}",
-                    "runner_environment": "${{ runner.environment }}"
-                  }
-                },
-                "resolvedDependencies": [
-                  {
-                    "uri": "git+https://github.com/${{ github.repository }}@${{ github.ref }}",
-                    "digest": { "gitCommit": "${{ github.sha }}" }
-                  }
-                ]
-              },
-              "runDetails": {
-                "builder": {
-                  "id": "https://github.com/${{ github.workflow_ref }}"
-                },
-                "metadata": {
-                  "invocationId": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
-                }
-              }
-            }
-          EOF
+      # - name: Generate predicate.json
+      #   id: generate_predicate
+      #   run: |
+      #     cat <<EOF > predicate.json
+      #       {
+      #         "buildDefinition": {
+      #           "buildType": "https://actions.github.io/buildtypes/workflow/v1",
+      #           "externalParameters": {
+      #             "workflow": {
+      #               "ref": "${{ github.ref }}",
+      #               "repository": "https://github.com/${{ github.repository }}",
+      #               "path": ".github/workflows/docker-publish.yml"
+      #             }
+      #           },
+      #           "internalParameters": {
+      #             "github": {
+      #               "event_name": "${{ github.event_name }}",
+      #               "repository_id": "${{ github.repository_id }}",
+      #               "repository_owner_id": "${{ github.repository_owner_id }}",
+      #               "runner_environment": "${{ runner.environment }}"
+      #             }
+      #           },
+      #           "resolvedDependencies": [
+      #             {
+      #               "uri": "git+https://github.com/${{ github.repository }}@${{ github.ref }}",
+      #               "digest": { "gitCommit": "${{ github.sha }}" }
+      #             }
+      #           ]
+      #         },
+      #         "runDetails": {
+      #           "builder": {
+      #             "id": "https://github.com/${{ github.workflow_ref }}"
+      #           },
+      #           "metadata": {
+      #             "invocationId": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+      #           }
+      #         }
+      #       }
+      #     EOF
           
-      - name: Attest for docker.io
-        uses: actions/attest@v3
-        id: attest
-        with:
-          subject-name: index.docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
-          subject-digest: ${{ steps.push.outputs.digest }}
-          predicate-type: "https://slsa.dev/provenance/v1"
-          predicate-path: "predicate.json"
-          push-to-registry: true
+      # - name: Attest for docker.io
+      #   uses: actions/attest@v3
+      #   id: attest
+      #   with:
+      #     subject-name: index.docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
+      #     subject-digest: ${{ steps.push.outputs.digest }}
+      #     predicate-type: "https://slsa.dev/provenance/v1"
+      #     predicate-path: "predicate.json"
+      #     push-to-registry: true
           
