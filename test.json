@@ -1,0 +1,74 @@
+{
+  "DOCKER_METADATA_OUTPUT_JSON": {
+    "tags": [
+      "dimpendev/docktest:1.9.5",
+      "dimpendev/docktest:latest",
+      "ghcr.io/dimpen/docktest:1.9.5",
+      "ghcr.io/dimpen/docktest:latest"
+    ],
+    "tag-names": ["1.9.5", "latest"],
+    "labels": {
+      "org.opencontainers.image.created": "2025-11-17T16:00:11.795Z",
+      "org.opencontainers.image.description": "This is a new description from github",
+      "org.opencontainers.image.licenses": "GPL-3.0",
+      "org.opencontainers.image.revision": "bdf1f05042ec34913947444d2edf2b24550ee81e",
+      "org.opencontainers.image.source": "https://github.com/dimpen/docktest",
+      "org.opencontainers.image.title": "docktest",
+      "org.opencontainers.image.url": "https://github.com/dimpen/docktest",
+      "org.opencontainers.image.version": "1.9.5"
+    },
+    "annotations": [
+      "manifest:org.opencontainers.image.created=2025-11-17T16:00:11.795Z",
+      "manifest:org.opencontainers.image.description=This is a new description from github",
+      "manifest:org.opencontainers.image.licenses=GPL-3.0",
+      "manifest:org.opencontainers.image.revision=bdf1f05042ec34913947444d2edf2b24550ee81e",
+      "manifest:org.opencontainers.image.source=https://github.com/dimpen/docktest",
+      "manifest:org.opencontainers.image.title=docktest",
+      "manifest:org.opencontainers.image.url=https://github.com/dimpen/docktest",
+      "manifest:org.opencontainers.image.version=1.9.5",
+
+      "index:org.opencontainers.image.created=2025-11-17T16:00:11.795Z",
+      "index:org.opencontainers.image.description=This is a new description from github",
+      "index:org.opencontainers.image.licenses=GPL-3.0",
+      "index:org.opencontainers.image.revision=bdf1f05042ec34913947444d2edf2b24550ee81e",
+      "index:org.opencontainers.image.source=https://github.com/dimpen/docktest",
+      "index:org.opencontainers.image.title=docktest",
+      "index:org.opencontainers.image.url=https://github.com/dimpen/docktest",
+      "index:org.opencontainers.image.version=1.9.5"
+    ]
+  },
+  "predicate": {
+    "buildDefinition": {
+      "buildType": "https://actions.github.io/buildtypes/workflow/v1",
+      "externalParameters": {
+        "workflow": {
+          "ref": "refs/tags/v1.9.5",
+          "repository": "https://github.com/dimpen/docktest",
+          "path": ".github/workflows/docker-publish.yml"
+        }
+      },
+      "internalParameters": {
+        "github": {
+          "event_name": "push",
+          "repository_id": "1094736528",
+          "repository_owner_id": "5825450",
+          "runner_environment": "github-hosted"
+        }
+      },
+      "resolvedDependencies": [
+        {
+          "uri": "git+https://github.com/dimpen/docktest@refs/tags/v1.9.5",
+          "digest": { "gitCommit": "bdf1f05042ec34913947444d2edf2b24550ee81e" }
+        }
+      ]
+    },
+    "runDetails": {
+      "builder": {
+        "id": "https://github.com/dimpen/docktest/.github/workflows/docker-publish.yml@refs/tags/v1.9.5"
+      },
+      "metadata": {
+        "invocationId": "https://github.com/dimpen/docktest/actions/runs/19435932629/attempts/1"
+      }
+    }
+  }
+}
